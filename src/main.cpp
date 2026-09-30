@@ -1,0 +1,36 @@
+#include <Engine/window.hpp>
+#include <Engine/retro_target.hpp>
+#include <Engine/model.hpp>
+
+#include <memory>
+
+int main(void) {
+  window win("Tundra", 1280, 960);
+  retro_target ren(640, 480);
+  
+  // --- vertex data: one triangle, NDC coords (-1..1) ---
+  auto vertices = std::make_unique<float[]>(9);
+  const float vertex_data[] = {
+    0.0f,  0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+  };
+  std::copy(std::begin(vertex_data), std::end(vertex_data), vertices.get());
+  
+  model m(std::move(vertices), "test.vert", "test.frag");
+  
+  // --- main loop ---
+  while (!win.should_close()) {
+    win.poll_events();
+    if (win.is_key_down(Key::Escape)) break;
+
+    ren.begin_scene(0.1, 0.1, 0.12, 1.0);
+
+    m.render();
+
+    ren.composite(1280, 960);
+    win.present();
+  }
+  
+  return 0;
+}
