@@ -17,7 +17,7 @@ int main(void) {
   };
   std::copy(std::begin(vertex_data), std::end(vertex_data), vertices.get());
   
-  model m(std::move(vertices), "test.vert", "test.frag");
+  model m(std::move(vertices), 9, "test.vert", "test.frag");
   
   // --- main loop ---
   while (!win.should_close()) {
