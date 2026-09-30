@@ -1,16 +1,21 @@
 #include <ps2/model.hpp>
 
-model::model(std::unique_ptr<float[]> vertices, size_t vertex_count,
+#include <stdexcept>
+#include <utility>
+
+model::model(const std::vector<float> &vertices,
              const std::string &vert_path, const std::string &frag_path)
-            : shader(vert_path, frag_path, false), vertex_count(vertex_count) {
-  this->vertices = std::move(vertices);
+            : shader(vert_path, frag_path, false), vertex_count(vertices.size() / 3) {
+  if (vertices.size() % 3 != 0) {
+    throw std::invalid_argument("vertex data must contain 3 floats per vertex");
+  }
 
   glGenVertexArrays(1, &this->vao);
   glGenBuffers(1, &this->vbo);
 
   glBindVertexArray(this->vao);
   glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-  glBufferData(GL_ARRAY_BUFFER, vertex_count * 3 * sizeof(float), this->vertices.get(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
@@ -22,7 +27,7 @@ model::model(std::unique_ptr<float[]> vertices, size_t vertex_count,
 
 model::model(model &&other) noexcept
   : vao(other.vao), vbo(other.vbo), shader(std::move(other.shader)),
-    vertices(std::move(other.vertices)), vertex_count(other.vertex_count) {
+    vertex_count(other.vertex_count) {
   other.vao = 0;
   other.vbo = 0;
 }
@@ -36,7 +41,6 @@ model &model::operator=(model &&other) noexcept {
     this->vao = other.vao;
     this->vbo = other.vbo;
     this->shader = std::move(other.shader);
-    this->vertices = std::move(other.vertices);
     this->vertex_count = other.vertex_count;
 
     other.vao = 0;

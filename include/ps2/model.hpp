@@ -3,20 +3,19 @@
 #include <glad/glad.h>
 #include <ps2/shader_prog.hpp>
 
-#include <memory>
 #include <string>
 #include <cstddef>
+#include <vector>
 
 class model {
   GLuint vao = 0, vbo = 0;
 
 protected:
   shader_prog shader;
-  std::unique_ptr<float[]> vertices;
-  size_t vertex_count; // number of vertices, not floats
+  size_t vertex_count = 0;
 
 public:
-  model(std::unique_ptr<float[]> vertices, size_t vertex_count,
+  model(const std::vector<float> &vertices,
         const std::string &vert_path, const std::string &frag_path);
 
   ~model();

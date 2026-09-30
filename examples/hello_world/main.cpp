@@ -2,22 +2,20 @@
 #include <ps2/retro_target.hpp>
 #include <ps2/model.hpp>
 
-#include <memory>
+#include <vector>
 
 int main(void) {
   window win("Tundra", 1280, 960);
   retro_target ren(640, 480);
   
   // --- vertex data: one triangle, NDC coords (-1..1) ---
-  auto vertices = std::make_unique<float[]>(9);
-  const float vertex_data[] = {
+  const std::vector<float> vertices{
     0.0f,  0.5f, 0.0f,
     -0.5f, -0.5f, 0.0f,
     0.5f, -0.5f, 0.0f,
   };
-  std::copy(std::begin(vertex_data), std::end(vertex_data), vertices.get());
-  
-  model m(std::move(vertices), 9, "test.vert", "test.frag");
+
+  model m(vertices, "test.vert", "test.frag");
   
   // --- main loop ---
   while (!win.should_close()) {
