@@ -1,4 +1,4 @@
-#include "window.hpp"
+#include <ps2/window.hpp>
 
 #include <glad/glad.h>
 #include <cstdio>

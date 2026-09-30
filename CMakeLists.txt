@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(tundra CXX)
+project(ps2 CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,37 +29,30 @@ set(GLAD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
 # --- Dependencies ---
 find_package(PkgConfig REQUIRED)
 
-# --- Main executable ---
+# --- Library ---
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
-add_executable(${PROJECT_NAME}
+add_library(${PROJECT_NAME}
   ${SOURCES}
   "${GLAD_DIR}/src/glad.c"
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-  src
+target_include_directories(${PROJECT_NAME} PUBLIC
+  include
   "${SDL_DIR}/include"
   "${GLAD_DIR}/include"
 )
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE
+  PUBLIC
   SDL3::SDL3
   ${CMAKE_DL_LIBS}   # glad needs dlopen/dlsym on Linux
-  m
 )
 
-# --- Copy assets to build directory ---
-file(GLOB_RECURSE ASSET_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_CURRENT_SOURCE_DIR}/res/*")
 
-add_custom_target(copy_res
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/res"
-    "${CMAKE_CURRENT_BINARY_DIR}/res"
-  COMMENT "Copying res to build directory"
-  SOURCES ${ASSET_FILES}
-)
+# example programs
+option(PS2_BUILD_DEMOS "Build demo programs" ON)
 
-add_dependencies(${PROJECT_NAME} copy_res)
+if (PS2_BUILD_DEMOS)
+  add_subdirectory(examples/hello_world)
+endif()

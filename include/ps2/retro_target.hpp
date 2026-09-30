@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "shader_prog.hpp"
+#include <ps2/shader_prog.hpp>
 
 class retro_target {
   GLuint fbo = 0;

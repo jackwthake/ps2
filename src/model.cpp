@@ -1,8 +1,8 @@
-#include "model.hpp"
+#include <ps2/model.hpp>
 
 model::model(std::unique_ptr<float[]> vertices, size_t vertex_count,
              const std::string &vert_path, const std::string &frag_path)
-            : shader(vert_path, frag_path), vertex_count(vertex_count) {
+            : shader(vert_path, frag_path, false), vertex_count(vertex_count) {
   this->vertices = std::move(vertices);
 
   glGenVertexArrays(1, &this->vao);

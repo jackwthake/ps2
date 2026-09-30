@@ -1,6 +1,5 @@
-#include "shader_prog.hpp"
-
-#include "util.hpp"
+#include <ps2/retro_target.hpp>
+#include <ps2/util.hpp>
 
 static GLuint compile_shader(GLenum type, const char *src) {
   GLuint shader = glCreateShader(type);
@@ -20,15 +19,23 @@ static GLuint compile_shader(GLenum type, const char *src) {
 }
 
 
-shader_prog::shader_prog(const std::string &vert_name, const std::string &frag_name) {
+shader_prog::shader_prog(const std::string &vert, const std::string &frag, const bool from_source) {
   this->vert = this->frag = 0;
 
-  if (auto vert_src = load_resource_txt("shaders/" + vert_name)) {
-    this->vert = compile_shader(GL_VERTEX_SHADER, vert_src->c_str());
-  }
+  // if !from_source then attempt to load from the res/shaders/<name>
+  // otherwise just attempt to compile the args as source code
+  // this is kind of messy.
+  if (!from_source) {
+    if (auto vert_src = load_resource_txt("shaders/" + vert)) {
+      this->vert = compile_shader(GL_VERTEX_SHADER, vert_src->c_str());
+    }
 
-  if (auto frag_src = load_resource_txt("shaders/" + frag_name)) {
-    this->frag = compile_shader(GL_FRAGMENT_SHADER, frag_src->c_str());
+    if (auto frag_src = load_resource_txt("shaders/" + frag)) {
+      this->frag = compile_shader(GL_FRAGMENT_SHADER, frag_src->c_str());
+    }
+  } else {
+    this->vert = compile_shader(GL_VERTEX_SHADER, vert.c_str());
+    this->frag = compile_shader(GL_FRAGMENT_SHADER, frag.c_str());
   }
 
   if (!this->vert && !this->frag) {

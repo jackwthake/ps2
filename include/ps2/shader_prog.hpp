@@ -6,7 +6,9 @@
 class shader_prog {
   GLuint vert, frag, program;
 public:
-  shader_prog(const std::string &vert_name, const std::string &frag_name);
+  // if !from_source then attempt to load from the res/shaders/<name>
+  // otherwise just attempt to compile the args as source code
+  shader_prog(const std::string &vert, const std::string &frag, const bool from_source);
   ~shader_prog();
 
   void use() const;

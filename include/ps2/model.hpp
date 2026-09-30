@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <Engine/shader_prog.hpp>
+#include <ps2/shader_prog.hpp>
 
 #include <memory>
 #include <string>
